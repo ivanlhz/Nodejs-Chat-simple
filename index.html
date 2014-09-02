@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Chat Simple</title>
+
+	<!-- BOOTSTRAP3 -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container" style="margin-top:20px">
+	
+		<h1>Chat Simple con Node y Socket.io</h1>
+		<h2>Descripción</h2>
+		<p>En este ejemplo usaremos el framework CSS3 <b>bootstrap3</b> para darle estilo y <b>JQUERY</b> para que el usuario envie datos al servidor</p>
+		<div class="col-md-4">
+			<div class="panel panel-default">
+  				<div class="panel-body">
+					<form>
+						<div class="form-group">
+						    <label for="user_name">Usuario</label>
+						    <input id="username" type="text" class="form-control" placeholder="nombre de usuario">
+						 </div>
+						<div class="form-group">
+		    				<label for="mensaje">Mensaje</label>
+		    				<input id="mensaje" type="text" class="form-control" placeholder="Escribe un mensaje">
+		  				</div>
+						<button type="submit" class="btn btn-primary pull-right">Enviar</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+    				<h3 class="panel-title">Mensajes</h3>
+  				</div>
+  				<div class="panel-body" id='mensajes'>
+  
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- JQUERY -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js"></script>
+	<!-- BOOTSTRAP3 
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
+	<!-- SOCKET.IO -->
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+		//Realizamos la conexion con el Socket
+		var socket = io.connect('http://127.0.0.1:3000');
+
+		//Cuando el usuario hace un submit 
+		$("form").submit(function(event)
+		{
+			event.preventDefault();//Para que no se recargue la pagina
+			//Enviamos la peticion 'send mensaje'
+			socket.emit("send mensaje",{ name: $('#username').val() , msg: $('#mensaje').val() } );//Emitimos el mensaje
+			//Limpiamos el campo del mensaje
+			$('#mensaje').val('');
+		});
+
+		//Cuando recibimos una peticion de 'put mensaje'
+		socket.on('put mensaje',function(data)
+		{
+			if(data.name === $('#username').val() ){
+				$('#mensajes').append("<p><i>Tú:: "+ data.msg+"</i></p>");
+			}else{
+				$('#mensajes').append("<p><strong>" + data.name + "</strong>:: "+ data.msg+"</p>");
+			};
+	
+		});
+
+		//Cuando entramos en el chat nos muestran todos los mensajes
+		socket.on('show historial',function(historial)
+		{
+			if(historial.length > 0){
+				for(var i = 0 ; i < historial.length ; i++)
+				{
+					$('#mensajes').append("<p><strong>" + historial[i].name + "</strong>:: "+ historial[i].msg+"</p>");
+				}
+			}
+		});
+		
+	</script>
+</body>
+</html>

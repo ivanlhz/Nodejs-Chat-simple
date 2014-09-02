@@ -1,0 +1,14 @@
+{
+  "name": "chat_simple",
+  "version": "1.0.0",
+  "description": "Chat entre usuarios que se conecten ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ivanlhz",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^1.0.6"
+  }
+}
